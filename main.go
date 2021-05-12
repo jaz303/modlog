@@ -56,6 +56,7 @@ func Configure(cfg *Config) {
 		logger.logger = configureLogger(logger.logger)
 	}
 
+	global.contextHooks = cfg.ContextHooks
 	global.configured = true
 }
 
