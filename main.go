@@ -37,19 +37,19 @@ func ModuleLogger(name string) *Logger {
 	return logger
 }
 
-func GetAllLogLevels() map[string]int {
-	out := make(map[string]int)
+func GetAllLogLevels() map[string]zl.Level {
+	out := make(map[string]zl.Level)
 	for _, l := range global.allLoggers {
-		out[l.module] = int(l.logger.GetLevel())
+		out[l.module] = l.logger.GetLevel()
 	}
 	return out
 }
 
-func SetAllLogLevels(levels map[string]int) {
+func SetAllLogLevels(levels map[string]zl.Level) {
 	for _, l := range global.allLoggers {
 		newLevel, ok := levels[l.module]
 		if ok {
-			l.SetLevel(zl.Level(newLevel))
+			l.SetLevel(newLevel)
 		}
 	}
 }
