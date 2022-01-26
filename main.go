@@ -28,10 +28,30 @@ func ModuleLogger(name string) *Logger {
 		innerLogger = configureLogger(innerLogger)
 	}
 
-	logger := &Logger{logger: innerLogger}
+	logger := &Logger{
+		module: name,
+		logger: innerLogger,
+	}
 	global.allLoggers = append(global.allLoggers, logger)
 
 	return logger
+}
+
+func GetAllLogLevels() map[string]int {
+	out := make(map[string]int)
+	for _, l := range global.allLoggers {
+		out[l.module] = int(l.logger.GetLevel())
+	}
+	return out
+}
+
+func SetAllLogLevels(levels map[string]int) {
+	for _, l := range global.allLoggers {
+		newLevel, ok := levels[l.module]
+		if ok {
+			l.SetLevel(zl.Level(newLevel))
+		}
+	}
 }
 
 func Configure(cfg *Config) {

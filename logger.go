@@ -8,6 +8,7 @@ import (
 )
 
 type Logger struct {
+	module string
 	logger zl.Logger
 }
 
