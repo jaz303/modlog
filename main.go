@@ -6,6 +6,7 @@ import (
 	"os"
 	"sync"
 
+	"github.com/rs/zerolog"
 	zl "github.com/rs/zerolog"
 	zll "github.com/rs/zerolog/log"
 )
@@ -55,10 +56,17 @@ func GetAllLogLevels() map[string]zl.Level {
 }
 
 func SetAllLogLevels(levels map[string]zl.Level) {
+	SetAllLogLevelsWithDefault(levels, global.defaultLogLevel)
+}
+
+func SetAllLogLevelsWithDefault(levels map[string]zl.Level, defaultLevel zerolog.Level) {
+	global.defaultLogLevel = defaultLevel
 	for _, l := range global.allLoggers {
 		newLevel, ok := levels[l.module]
 		if ok {
 			l.SetLevel(newLevel)
+		} else {
+			l.SetLevel(defaultLevel)
 		}
 	}
 }
