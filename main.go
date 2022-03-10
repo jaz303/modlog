@@ -11,18 +11,27 @@ import (
 )
 
 var global = struct {
-	lock         sync.Mutex
-	allLoggers   []*Logger
-	configured   bool
-	output       io.Writer
-	contextHooks []ContextHook
-}{}
+	lock            sync.Mutex
+	allLoggers      []*Logger
+	configured      bool
+	output          io.Writer
+	contextHooks    []ContextHook
+	defaultLogLevel zl.Level
+}{
+	defaultLogLevel: zl.InfoLevel,
+}
 
 func ModuleLogger(name string) *Logger {
-	innerLogger := zll.With().Str(keyModule, name).Logger()
-
 	global.lock.Lock()
 	defer global.lock.Unlock()
+
+	for _, l := range global.allLoggers {
+		if l.module == name {
+			return l
+		}
+	}
+
+	innerLogger := zll.With().Str(keyModule, name).Logger()
 
 	if global.configured {
 		innerLogger = configureLogger(innerLogger)
@@ -54,6 +63,10 @@ func SetAllLogLevels(levels map[string]zl.Level) {
 	}
 }
 
+func SetDefaultLogLevel(level zl.Level) {
+	global.defaultLogLevel = level
+}
+
 func Configure(cfg *Config) {
 	global.lock.Lock()
 	defer global.lock.Unlock()
@@ -81,5 +94,5 @@ func Configure(cfg *Config) {
 }
 
 func configureLogger(logger zl.Logger) zl.Logger {
-	return logger.Output(global.output)
+	return logger.Level(global.defaultLogLevel).Output(global.output)
 }
