@@ -17,7 +17,7 @@ func (l *Logger) SetLevel(level zl.Level) {
 }
 
 func (l *Logger) Event(eventName string) *zl.Event {
-	return l.logger.Info().Str(keyEventType, eventName)
+	return l.logger.Log().Str(keyEventType, eventName)
 }
 
 func (l *Logger) EventContext(ctx context.Context, eventName string) *zl.Event {
