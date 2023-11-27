@@ -12,6 +12,10 @@ type Logger struct {
 	logger zl.Logger
 }
 
+func (l *Logger) Zerolog() zl.Logger {
+	return l.logger
+}
+
 func (l *Logger) SetLevel(level zl.Level) {
 	l.logger = l.logger.Level(level)
 }
